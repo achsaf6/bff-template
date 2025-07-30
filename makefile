@@ -31,3 +31,4 @@ local:
 	poetry run uvicorn main:app --reload
 
 test:
+	@echo "Define here whatever you want"
