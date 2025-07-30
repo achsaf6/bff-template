@@ -1,70 +1,87 @@
-# Getting Started with Create React App
+# BFF (Backend For Frontend) Template
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project is a Backend For Frontend (BFF) template that provides a structured starting point for building backend services that directly support frontend applications. The BFF pattern is designed to optimize the backend API for specific frontend requirements.
 
-## Available Scripts
+## Prerequisites
 
-In the project directory, you can run:
+Before you begin, ensure you have the following installed on your system:
 
-### `npm start`
+### Python
+- Python 3.8 or higher
+- To check your Python version:
+  ```bash
+  python --version
+  ```
+- Install Python from [python.org](https://www.python.org/downloads/)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Poetry (Python Dependency Management)
+- Poetry is required for managing Python dependencies
+- Install Poetry by running:
+  ```bash
+  curl -sSL https://install.python-poetry.org | python3 -
+  ```
+- Verify installation:
+  ```bash
+  poetry --version
+  ```
+- For more information, visit [Poetry's documentation](https://python-poetry.org/docs/)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Node.js and npm
+- Node.js 14.x or higher is required for the React frontend
+- To check your Node.js version:
+  ```bash
+  node --version
+  npm --version
+  ```
+- Install Node.js from [nodejs.org](https://nodejs.org/)
 
-### `npm test`
+## Project Setup
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/achsaf6/bff-template
+   cd bff-template
+   ```
 
-### `npm run build`
+2. Initialize the project:
+   ```bash
+   make init
+   ```
+   This command will:
+   - Set up your project name
+   - Create and set up the React frontend
+   - Install backend dependencies
+   - Configure the Python environment
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+3. After initialization, set your Python interpreter to the path shown in the terminal output.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Project Structure
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```
+bff-template/
+├── backend/         # Backend service directory
+│   └── main.py     # Main application entry point
+├── frontend/        # React frontend application
+├── makefile        # Build automation
+├── poetry.lock     # Lock file for dependencies
+└── pyproject.toml  # Python project configuration
+```
 
-### `npm run eject`
+## Development
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Available make commands:
+- `make init` - Initialize the project (first-time setup)
+- `make dev` - Run both frontend and backend in development mode
+- `make local` - Run backend only
+- `make update` - Commit and push changes
+- `make test` - Run tests (customizable)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Contributing
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+1. Create a new branch for your feature
+2. Make your changes
+3. Submit a pull request
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## License
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+[Add your license information here]
