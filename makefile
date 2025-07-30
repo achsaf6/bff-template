@@ -2,15 +2,19 @@
 PHONY: init update dev local 
 
 init:
+	@read -p "Enter project title: " title; \
+	sed -i '' 's/name = "endless"/name = "'$$title'"/' pyproject.toml
+
 	@echo Creating frontend
 	mkdir -p frontend
-	cd frontend && npx create-react-app .
+	cd frontend && npx create-react-app . && npm run build
 	@echo frontend Complete
 
 	@echo Creating backend
-	@read -p "Enter project title: " title; \
-	sed -i '' 's/name = "endless"/name = "'$$title'"/' pyproject.toml
 	poetry install --no-root
+
+	@echo "Starting backend in local mode..."
+	make local
 	
 update:
 	git add .
