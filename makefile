@@ -1,5 +1,5 @@
 
-PHONY: init dev local 
+PHONY: init update dev local 
 
 init:
 	@echo Creating frontend
@@ -12,7 +12,10 @@ init:
 	sed -i '' 's/name = "endless"/name = "'$$title'"/' pyproject.toml
 	poetry install --no-root
 	
-	
+update:
+	git add .
+	git commit -m 'Update'
+	git push
 
 dev:
 	cd frontend && npm start & \
