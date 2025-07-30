@@ -1,5 +1,5 @@
 
-PHONY: init update dev local 
+PHONY: init update dev local test
 
 init:
 	@read -p "Enter project title: " title; \
@@ -13,10 +13,8 @@ init:
 	@echo Creating backend
 	poetry install --no-root
 
-	@echo "Starting backend in local mode..."
-	make local
-	@echo "Opening http://localhost:8000 in your default browser..."
-	open http://localhost:8000
+	@echo "Set your python interpreter to be: \033[33m$$(poetry env info --path)\033[0m"
+	@echo "you can run everything using the make local command"
 	
 update:
 	git add .
@@ -32,3 +30,4 @@ local:
 	cd backend && \
 	poetry run uvicorn main:app --reload
 
+test:
