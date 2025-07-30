@@ -3,7 +3,7 @@ PHONY: init update dev local
 
 init:
 	@read -p "Enter project title: " title; \
-	sed -i '' 's/name = "endless"/name = "'$$title'"/' pyproject.toml
+	sed -i '' 's/name = "bff-template"/name = "'$$title'"/' pyproject.toml
 
 	@echo Creating frontend
 	mkdir -p frontend
@@ -15,6 +15,8 @@ init:
 
 	@echo "Starting backend in local mode..."
 	make local
+	@echo "Opening http://localhost:8000 in your default browser..."
+	open http://localhost:8000
 	
 update:
 	git add .
