@@ -1,25 +1,14 @@
-PHONY: init update front back local test
+.PHONY: init update front back local test
 
 init:
-	chmod +x init.sh
-	./init.sh
-
-	chmod +x init.sh
-	./init.sh
-
 	chmod +x init.sh
 	./init.sh
 
 update:
 	git add .
 	git commit --amend --no-edit
-	git commit --amend --no-edit
 	git push
 
-front:
-	npm start
-
-back:
 front:
 	npm start
 
