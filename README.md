@@ -6,6 +6,18 @@ This project is a Backend For Frontend (BFF) template that provides a structured
 
 Before you begin, ensure you have the following installed on your system:
 
+### Container Runtime (for macOS)
+- Colima is required for running containers on macOS
+- Install Colima using Homebrew:
+  ```bash
+  brew install colima
+  ```
+- Start Colima:
+  ```bash
+  colima start
+  ```
+- For more information, visit [Colima's documentation](https://github.com/abiosoft/colima)
+
 ### Python
 - Python 3.8 or higher
 - To check your Python version:
@@ -34,6 +46,19 @@ Before you begin, ensure you have the following installed on your system:
   npm --version
   ```
 - Install Node.js from [nodejs.org](https://nodejs.org/)
+
+### GitHub CLI (gh)
+- GitHub CLI is required for managing GitHub secrets and interacting with repositories
+- Install GitHub CLI using Homebrew:
+  ```bash
+  brew install gh
+  ```
+- Authenticate with GitHub:
+  ```bash
+  gh auth login
+  ```
+- Follow the interactive prompts to complete authentication
+- For more information, visit [GitHub CLI documentation](https://cli.github.com/)
 
 ## Project Setup
 
