@@ -7,7 +7,7 @@ init:
 update:
 	git add .
 	git commit --amend --no-edit
-	git push
+	git push -f
 
 front:
 	npm start
