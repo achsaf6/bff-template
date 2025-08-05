@@ -5,9 +5,9 @@
 
 title=$(basename "$(pwd)")
 cicd=.github/workflows/cicd.yaml
-PROJECT_ID="marketing-innovation-450013"
+PROJECT_ID=marketing-innovation-450013
 imageUrl=gcr.io/$PROJECT_ID/$title
-SA_EMAIL="$title-sa@$PROJECT_ID.iam.gserviceaccount.com"
+SA_EMAIL=$title-sa@$PROJECT_ID.iam.gserviceaccount.com
 SA_NAME=$(echo $title | tr '[:lower:]' '[:upper:]')_SA
 
 echo -n "Enter region (default: europe-west4): "
@@ -39,8 +39,8 @@ poetry install --no-root
 # Create docker container
 colima start
 
-docker build -t imageUrl .
-docker push imageUrl
+docker build -t $imageUrl .
+docker push $imageUrl
 
 # Create Service Account
 gcloud iam service-accounts create $title-sa \
@@ -54,9 +54,9 @@ gcloud projects add-iam-policy-binding $PROJECT_ID\
       --role="roles/iam.serviceAccountUser" \
       --role="roles/storage.admin" \
       --role="roles/artifactregistry.admin" \
-
-gcloud iam service-accounts keys create bff-template-sa-key.json \
-    --iam-account=$SA_EMAIL
+      --role="roles/run.developer" \
+      --role="roles/storage.admin" \
+      --role="roles/iam.serviceAccountUser"
 
 gcloud iam service-accounts keys create - --iam-account=$SA_EMAIL | gh secret set SA_NAME
 
