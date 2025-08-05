@@ -6,17 +6,25 @@ This project is a Backend For Frontend (BFF) template that provides a structured
 
 Before you begin, ensure you have the following installed on your system:
 
-### Container Runtime (for macOS)
-- Colima is required for running containers on macOS
-- Install Colima using Homebrew:
+### Container Runtime and Cloud Tools
+- Colima is required for running containers on macOS:
   ```bash
   brew install colima
-  ```
-- Start Colima:
-  ```bash
   colima start
   ```
-- For more information, visit [Colima's documentation](https://github.com/abiosoft/colima)
+- Docker is required for containerization:
+  ```bash
+  brew install docker
+  ```
+- Google Cloud SDK (required for admin mode):
+  ```bash
+  brew install google-cloud-sdk
+  gcloud init
+  gcloud auth configure-docker
+  ```
+- For more information, visit:
+  - [Colima's documentation](https://github.com/abiosoft/colima)
+  - [Google Cloud SDK documentation](https://cloud.google.com/sdk/docs)
 
 ### Python
 - Python 3.8 or higher
@@ -72,13 +80,24 @@ Before you begin, ensure you have the following installed on your system:
    ```bash
    make init
    ```
-   This command will:
-   - Set up your project name
-   - Create and set up the React frontend
-   - Install backend dependencies
-   - Configure the Python environment
+   This command will run the initialization script that:
+   - Prompts for deployment type:
+     - `local` (default): Sets up local development environment
+     - `admin`: Sets up full deployment with GCP service accounts and Docker configuration
+   - Prompts for region (default: europe-west4)
+   - Updates project name in configuration files
+   - Creates and sets up a new React frontend application
+   - Installs Python backend dependencies using Poetry
+   - Configures CI/CD workflow settings
+   
+   If running in `admin` mode, it will also:
+   - Activate CI/CD workflow
+   - Build and push Docker container to Google Container Registry
+   - Create and configure GCP service account with necessary permissions
+   - Set up GitHub secrets for deployment
 
 3. After initialization, set your Python interpreter to the path shown in the terminal output.
+   Note: The init script can only be run once as it self-disables after completion.
 
 ## Project Structure
 

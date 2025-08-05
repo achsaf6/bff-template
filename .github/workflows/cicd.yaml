@@ -27,7 +27,7 @@ jobs:
       - name: Google Cloud Auth
         uses: 'google-github-actions/auth@v2'
         with:
-          credentials_json: '${{ secrets.BFF_TEMPLATE_SA }}'
+          credentials_json: ${{ secrets.BFF_TEMPLATE_SA }}
           project_id: ${{ env.PROJECT_ID }}
 
       - name: Set up Cloud SDK
@@ -66,7 +66,7 @@ jobs:
       - name: Deploy to Cloud Run
         run: |
           # Base64 encode the service account JSON
-          echo '${{ secrets.BFF_TEMPLATE_SA }}' | base64 > /tmp/service-account-base64.txt
+          echo ${{ secrets.BFF_TEMPLATE_SA }} | base64 > /tmp/service-account-base64.txt
           
           gcloud run deploy $SERVICE_NAME \
             --image ${{ env.DOCKER_IMAGE_URL }}:latest \
