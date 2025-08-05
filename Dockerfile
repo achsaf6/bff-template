@@ -1,6 +1,6 @@
 # Multi-stage build for frontend and backend
 
-# Stage 1: Build frontend with Next.js
+# Stage 1: Build frontend with Create React App
 FROM node:18-alpine AS frontend-builder
 
 WORKDIR /app
@@ -44,15 +44,13 @@ RUN --mount=type=cache,target=$POETRY_CACHE_DIR \
 
 # Copy backend and CLI code
 COPY backend/ backend/
-COPY cli/ cli/
 
 # Create frontend directory structure that backend expects
 RUN mkdir -p frontend
 
 # Copy built frontend from first stage to the expected frontend directory
-COPY --from=frontend-builder /app/dist frontend/dist
+COPY --from=frontend-builder /app/build frontend/build
 COPY --from=frontend-builder /app/package.json frontend/package.json
-COPY --from=frontend-builder /app/next.config.js frontend/next.config.js
 
 # Set default port (Cloud Run will override this with PORT env var)
 ENV PORT=3000
@@ -62,6 +60,5 @@ EXPOSE $PORT
 
 # Start the application
 # CMD ["/app/start.sh"]
-CMD uvicorn backend.main:app --host 0.0.0.0 --port $PORT
-
+CMD ["sh", "-c", "poetry run uvicorn backend.main:app --host 0.0.0.0 --port ${PORT}"]
 
