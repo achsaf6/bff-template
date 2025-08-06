@@ -1,4 +1,4 @@
-.PHONY: init update front back local test
+.PHONY: init update front back local docker test
 
 init:
 	chmod +x init.sh
@@ -13,12 +13,24 @@ front:
 	npm start
 
 back:
-	poetry run uvicorn main:app --reload
+	poetry run uvicorn backend.main:app --reload
 
 local:
-	# cd frontend && npm run build
-	cd backend && \
-	poetry run uvicorn main:app --reload
+	cd frontend && npm run build
+	poetry run uvicorn backend.main:app --reload
+
+docker:
+	@echo "Getting PORT from environment (defaults to 8000)..."
+	@PORT=$${PORT:-8000}; \
+	echo "Stopping any running Docker container on port $$PORT..."; \
+	DOCKER_ID=$$(docker ps -q --filter "publish=$$PORT"); \
+	if [ -n "$$DOCKER_ID" ]; then \
+		docker stop $$DOCKER_ID; \
+		docker rm $$DOCKER_ID; \
+	fi; \
+	docker build -t bff-template .; \
+	echo "Exporting environment variables from .env file..."; \
+	docker run --env-file .env -p $$PORT:$$PORT bff-template
 
 test:
 	@echo "Define here whatever you want"

@@ -2,12 +2,12 @@
 
 # Project initialization script
 
-title=$(basename "$(pwd)")
+title=$(basename "$(pwd)" | tr '[:upper:]' '[:lower:]')
 cicd=.github/workflows/cicd.yaml
 PROJECT_ID=marketing-innovation-450013
 imageUrl=gcr.io/$PROJECT_ID/$title
 SA_EMAIL=$title-sa@$PROJECT_ID.iam.gserviceaccount.com
-SA_NAME=$(echo $title | tr '[:lower:]' '[:upper:]')_SA
+SA_NAME=$(echo $title | tr '[:lower:]' '[:upper:]' | tr '-' '_')_SA
 
 # Ask for deployment type
 echo -n "Enter deployment type (local/admin, default: local): "
@@ -22,8 +22,10 @@ if [ -z "$region" ]; then
   region="europe-west4"
 fi
 
+touch .env
 # Update project name 
 sed -i '' "s/name = \"bff-template\"/name = \"$title\"/" pyproject.toml
+sed -i '' "s/name = \"bff-template\"/name = \"$title\"/" makefile
 
 # Setup frontend
 echo "Creating frontend..."
@@ -57,17 +59,37 @@ if [ "$deployment_type" = "admin" ]; then
       --display-name="$title Service Account" \
       --project=$PROJECT_ID
 
-  gcloud projects add-iam-policy-binding $PROJECT_ID\
+  gcloud iam service-accounts create $title-sa \
+      --display-name="$title Service Account" \
+      --project=$PROJECT_ID
+
+  gcloud projects add-iam-policy-binding $PROJECT_ID \
         --member="serviceAccount:$SA_EMAIL" \
-        --role="roles/run.admin" \
-        --role="roles/iam.serviceAccountUser" \
-        --role="roles/storage.admin" \
-        --role="roles/artifactregistry.admin" \
-        --role="roles/run.developer" \
-        --role="roles/storage.admin" \
+        --role="roles/run.admin"
+
+  gcloud projects add-iam-policy-binding $PROJECT_ID \
+        --member="serviceAccount:$SA_EMAIL" \
         --role="roles/iam.serviceAccountUser"
 
-  gcloud iam service-accounts keys create - --iam-account=$SA_EMAIL | gh secret set SA_NAME
+  gcloud projects add-iam-policy-binding $PROJECT_ID \
+        --member="serviceAccount:$SA_EMAIL" \
+        --role="roles/storage.admin"
+
+  gcloud projects add-iam-policy-binding $PROJECT_ID \
+        --member="serviceAccount:$SA_EMAIL" \
+        --role="roles/artifactregistry.admin"
+
+  gcloud projects add-iam-policy-binding $PROJECT_ID \
+        --member="serviceAccount:$SA_EMAIL" \
+        --role="roles/run.developer"
+
+  gcloud iam service-accounts keys create sa-key.json --iam-account=$SA_EMAIL
+
+  gh secret set $SA_NAME < sa-key.json
+
+  rm sa-key.json
+  
+  colima stop
   echo "Admin setup completed"
 fi
 
@@ -78,8 +100,4 @@ echo "You can run everything using the 'make local' command"
 
 
 # This is to prevent from running more than once
-chmod 000 init.sh
-
-# Additional initialization tasks from comments:
-# TODO: Update these values in your deployment configuration:
-# - create a standard init and a special one for me
+chmod 666 init.sh

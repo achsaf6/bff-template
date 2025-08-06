@@ -65,18 +65,11 @@ jobs:
 
       - name: Deploy to Cloud Run
         run: |
-          # Base64 encode the service account JSON
-          echo ${{ secrets.BFF_TEMPLATE_SA }} | base64 > /tmp/service-account-base64.txt
-          
           gcloud run deploy $SERVICE_NAME \
             --image ${{ env.DOCKER_IMAGE_URL }}:latest \
             --platform managed \
             --region ${{ env.CONTAINER_REGION }} \
             --port 80 \
-            --set-env-vars "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" \
-            --set-env-vars "BFF_TEMPLATE_SA=$(cat /tmp/service-account-base64.txt)" \
             --memory 16Gi \
             --cpu 4
           
-          # Clean up the temporary file
-          rm /tmp/service-account-base64.txt
