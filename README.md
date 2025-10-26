@@ -120,6 +120,63 @@ Available make commands:
 - `make update` - Commit and push changes
 - `make test` - Run tests (customizable)
 
+## Managing Dependencies
+
+### Adding Frontend Libraries (npm)
+
+To add a new library to the React frontend:
+
+1. Navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
+
+2. Install the package:
+   ```bash
+   npm install <package-name>
+   ```
+
+3. For development-only dependencies:
+   ```bash
+   npm install --save-dev <package-name>
+   ```
+
+4. The package will be automatically added to `package.json` and `package-lock.json`
+
+Example:
+```bash
+npm install axios           # Add axios for HTTP requests
+npm install --save-dev jest # Add jest as a dev dependency
+```
+
+### Adding Python Modules (uv)
+
+To add a new Python module to the backend:
+
+1. Make sure you're in the project root directory
+
+2. Add a package:
+   ```bash
+   uv add <package-name>
+   ```
+
+3. For development-only dependencies:
+   ```bash
+   uv add --dev <package-name>
+   ```
+
+4. The package will be automatically added to `pyproject.toml` and `uv.lock`
+
+Example:
+```bash
+uv add requests         # Add requests for HTTP calls
+uv add --dev pytest     # Add pytest as a dev dependency
+```
+
+For more information:
+- [npm documentation](https://docs.npmjs.com/)
+- [uv documentation](https://github.com/astral-sh/uv)
+
 ## Contributing
 
 1. Create a new branch for your feature

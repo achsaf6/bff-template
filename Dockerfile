@@ -22,25 +22,15 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Poetry for Python dependencies
-ENV POETRY_VERSION=1.6.1 \
-    POETRY_HOME="/opt/poetry" \
-    POETRY_NO_INTERACTION=1 \
-    POETRY_VIRTUALENVS_CREATE=false \
-    POETRY_CACHE_DIR=/tmp/poetry_cache \
-    PIP_BREAK_SYSTEM_PACKAGES=1
-
-ENV PATH="$POETRY_HOME/bin:$PATH"
-
-# Install poetry
-RUN pip install --break-system-packages "poetry==$POETRY_VERSION"
+# Install uv for Python dependency management
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 # Copy Python dependencies
-COPY pyproject.toml poetry.lock ./
+COPY pyproject.toml uv.lock ./
 
 # Install Python dependencies (without dev dependencies)
-RUN --mount=type=cache,target=$POETRY_CACHE_DIR \
-    poetry install --only main --no-root
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-dev
 
 # Copy backend and CLI code
 COPY backend/ backend/
@@ -60,5 +50,5 @@ EXPOSE $PORT
 
 # Start the application
 # CMD ["/app/start.sh"]
-CMD ["sh", "-c", "poetry run uvicorn backend.main:app --host 0.0.0.0 --port ${PORT}"]
+CMD ["sh", "-c", "uv run uvicorn backend.main:app --host 0.0.0.0 --port ${PORT}"]
 

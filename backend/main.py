@@ -5,9 +5,7 @@ from fastapi.responses import FileResponse
 import os
 
 app = FastAPI(
-    title="Backend",
-    description="Backend API for an application",
-    version="0.1.0"
+    title="Backend", description="Backend API for an application", version="0.1.0"
 )
 
 # Configure CORS
@@ -22,12 +20,16 @@ app.add_middleware(
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Mount static files
-app.mount("/static", StaticFiles(directory=f"{BASE_DIR}/frontend/build/static"), name="static")
+app.mount(
+    "/static", StaticFiles(directory=f"{BASE_DIR}/frontend/build/static"), name="static"
+)
+
 
 @app.get("/health")
 async def health_check():
     """Health check endpoint"""
-    return {"status": "healthy", "service": "backend"} 
+    return {"status": "healthy", "service": "backend"}
+
 
 @app.get("/{full_path:path}")
 async def serve_frontend(full_path: str):
@@ -36,6 +38,6 @@ async def serve_frontend(full_path: str):
     file_path = os.path.join(f"{BASE_DIR}/frontend/build", full_path)
     if os.path.isfile(file_path):
         return FileResponse(file_path)
-    
+
     # Otherwise serve index.html for client-side routing
     return FileResponse(f"{BASE_DIR}/frontend/build/index.html")

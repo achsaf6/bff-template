@@ -1,8 +1,7 @@
-.PHONY: init update front back local docker test
+.PHONY: init update front back local docker test target deploy clean status history 
 
 init:
-	chmod +x init.sh
-	./init.sh
+	uv run python -m manager init
 
 update:
 	git add .
@@ -32,5 +31,17 @@ docker:
 	echo "Exporting environment variables from .env file..."; \
 	docker run --env-file .env -p $$PORT:$$PORT bff-template
 
+deploy:
+	uv run python -m manager deploy $(ARGS)
+
+clean:
+	uv run python -m manager clean
+
+status:
+	uv run python -m manager status
+
+history:
+	uv run python -m manager history
+
 test:
-	@echo "Define here whatever you want"
+	@echo $(ARGS)

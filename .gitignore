@@ -50,3 +50,12 @@ venv/
 ENV/
 .idea/
 .vscode/
+
+# Node
+frontend/node_modules
+frontend/build
+frontend/src
+!frontend/public/*
+# Manager manifest (state file)
+manager/.manifest
+sa-key.json
