@@ -46,9 +46,9 @@ class InitManager:
             return False
     
     def setup_frontend(self, skip_build: bool = False) -> bool:
-        """Setup the frontend React application."""
+        """Setup the frontend React application with Vite."""
         try:
-            print("Setting up frontend...")
+            print("Setting up frontend with Vite...")
             
             # Create frontend directory if it doesn't exist
             self.config.frontend_dir.mkdir(parents=True, exist_ok=True)
@@ -66,10 +66,103 @@ class InitManager:
                         check=True
                     )
             else:
-                # Initialize React app
-                print("Creating React app (this may take a few minutes)...")
+                # Create package.json with Vite
+                print("Creating Vite React app...")
+                package_json_content = """{
+  "name": "frontend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.4.2"
+  }
+}"""
+                package_json.write_text(package_json_content)
+                
+                # Create vite.config.js
+                vite_config = self.config.frontend_dir / "vite.config.js"
+                vite_config_content = """import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+})
+"""
+                vite_config.write_text(vite_config_content)
+                
+                # Set up index.html at root - use existing one if available
+                root_index = self.config.frontend_dir / "index.html"
+                public_index = self.config.frontend_dir / "public" / "index.html"
+                
+                if public_index.exists() and not root_index.exists():
+                    # Copy the custom index.html from public to root
+                    root_index.write_text(public_index.read_text())
+                elif not root_index.exists():
+                    # Create a default index.html
+                    default_index = """<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0F172A" />
+    <meta name="description" content="Modern web application powered by React" />
+    <title>BFF Template</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+"""
+                    root_index.write_text(default_index)
+                
+                # Create src directory and main entry point
+                src_dir = self.config.frontend_dir / "src"
+                src_dir.mkdir(exist_ok=True)
+                
+                main_jsx = src_dir / "main.jsx"
+                main_jsx_content = """import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App.jsx'
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+)
+"""
+                main_jsx.write_text(main_jsx_content)
+                
+                # Create a basic App component
+                app_jsx = src_dir / "App.jsx"
+                app_jsx_content = """function App() {
+  return (
+    <div>
+      <h1>Welcome to React + Vite</h1>
+      <p>Your custom index.html is loaded!</p>
+    </div>
+  )
+}
+
+export default App
+"""
+                app_jsx.write_text(app_jsx_content)
+                
+                # Install dependencies
+                print("Installing dependencies (this may take a few minutes)...")
                 subprocess.run(
-                    ["npx", "create-react-app", ".", "--yes"],
+                    ["npm", "install"],
                     cwd=self.config.frontend_dir,
                     check=True
                 )

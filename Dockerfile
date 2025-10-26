@@ -1,13 +1,13 @@
 # Multi-stage build for frontend and backend
 
-# Stage 1: Build frontend with Create React App
+# Stage 1: Build frontend with Vite
 FROM node:18-alpine AS frontend-builder
 
 WORKDIR /app
 
 # Copy package files
 COPY frontend/package*.json ./
-RUN npm ci --only=production
+RUN npm ci
 
 # Copy frontend source
 COPY frontend/ ./
@@ -38,8 +38,8 @@ COPY backend/ backend/
 # Create frontend directory structure that backend expects
 RUN mkdir -p frontend
 
-# Copy built frontend from first stage to the expected frontend directory
-COPY --from=frontend-builder /app/build frontend/build
+# Copy built frontend from first stage to the expected frontend directory (Vite outputs to dist/)
+COPY --from=frontend-builder /app/dist frontend/build
 COPY --from=frontend-builder /app/package.json frontend/package.json
 
 # Set default port (Cloud Run will override this with PORT env var)
