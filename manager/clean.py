@@ -3,6 +3,7 @@ Project cleanup and teardown.
 """
 
 import shutil
+import subprocess
 from pathlib import Path
 
 from .config import ProjectConfig
@@ -89,14 +90,40 @@ class CleanManager:
         
         return True
     
+    def create_template_from_git(self, parent_dir: Path, project_name: str) -> bool:
+        """Clone a fresh template from the bff-template repository."""
+        print("")
+        print("Creating new template from GitHub...")
+        
+        template_url = "https://github.com/achsaf6/bff-template.git"
+        target_path = parent_dir / project_name
+        
+        try:
+            # Clone the repository
+            subprocess.run(
+                ["git", "clone", template_url, str(target_path)],
+                check=True,
+                capture_output=True,
+                text=True
+            )
+            print(f"✓ Template cloned to {target_path}")
+            return True
+        except subprocess.CalledProcessError as e:
+            print(f"✗ Error cloning template: {e.stderr}")
+            return False
+        except FileNotFoundError:
+            print("✗ Git is not installed or not available in PATH")
+            return False
+    
     def cleanup_local(self) -> bool:
-        """Remove local repository."""
+        """Remove local repository and create a fresh template."""
         print("")
         print("Removing local repository...")
         
         # Get parent directory
         parent_dir = self.config.project_root.parent
         current_dir = self.config.project_root
+        project_name = self.config.project_name
         
         print(f"⚠️  This will delete: {current_dir}")
         print("This action cannot be undone!")
@@ -111,6 +138,10 @@ class CleanManager:
             # Remove the entire directory
             shutil.rmtree(current_dir)
             print("✓ Local repository deleted")
+            
+            # Create fresh template
+            self.create_template_from_git(parent_dir, project_name)
+            
             return True
         except Exception as e:
             print(f"✗ Error deleting local repository: {e}")
