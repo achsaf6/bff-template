@@ -32,7 +32,11 @@ docker:
 	docker run --env-file .env -p $$PORT:$$PORT bff-template
 
 deploy:
-	uv run python -m manager deploy $(ARGS)
+	@echo "Re-starting Colima in x86_64 mode with Rosetta if available..."
+	-@colima stop >/dev/null 2>&1 || true
+	-@colima start --arch x86_64 --vm-type vz --vz-rosetta >/dev/null 2>&1 || colima start --arch x86_64 >/dev/null 2>&1
+	@echo "Using DOCKER_DEFAULT_PLATFORM=linux/amd64 for cross-arch build..."
+	@DOCKER_DEFAULT_PLATFORM=linux/amd64 uv run python -m manager deploy $(ARGS)
 
 clean:
 	uv run python -m manager clean
