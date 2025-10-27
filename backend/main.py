@@ -8,6 +8,10 @@ app = FastAPI(
     title="Backend", description="Backend API for an application", version="0.1.0"
 )
 
+# Determine if we're in development or production
+ENVIRONMENT = os.getenv("ENVIRONMENT", "production")
+IS_DEVELOPMENT = ENVIRONMENT == "development"
+
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
@@ -24,10 +28,12 @@ FRONTEND_DIST = os.path.join(BASE_DIR, "frontend", "dist")
 @app.get("/health")
 async def health_check():
     """Health check endpoint"""
-    return {"status": "healthy", "service": "backend"}
+    return {"status": "healthy", "service": "backend", "environment": ENVIRONMENT}
 
 
-# Mount all static files from Vite's dist directory
-app.mount(
-    "/", StaticFiles(directory=FRONTEND_DIST, html=True), name="static"
-)
+# Only mount static files in production
+# In development, the Vite dev server will serve the frontend
+if not IS_DEVELOPMENT:
+    app.mount(
+        "/", StaticFiles(directory=FRONTEND_DIST, html=True), name="static"
+    )

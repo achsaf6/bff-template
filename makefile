@@ -1,6 +1,7 @@
-.PHONY: init update front back local docker test target deploy clean status history 
+.PHONY: init update front back dev local docker test target deploy clean status history 
 
 init:
+	git submodule update --remote --recursive
 	uv run python -m manager init
 
 update:
@@ -9,14 +10,24 @@ update:
 	git push -f
 
 front:
-	npm start
+	cd frontend && npm run dev
 
 back:
-	poetry run uvicorn backend.main:app --reload
+	ENVIRONMENT=development uv run uvicorn backend.main:app --reload --port 8000
 
 local:
+	@echo "Starting development servers..."
+	@echo "Frontend: http://localhost:5173"
+	@echo "Backend API: http://localhost:8000"
+	@echo ""
+	@trap 'kill 0' INT; \
+	(cd frontend && npm run dev) & \
+	ENVIRONMENT=development uv run uvicorn backend.main:app --reload --port 8000 & \
+	wait
+
+dev:
 	cd frontend && npm run build
-	poetry run uvicorn backend.main:app --reload
+	uv run uvicorn backend.main:app --reload
 
 docker:
 	@echo "Getting PORT from environment (defaults to 8000)..."
@@ -48,4 +59,4 @@ history:
 	uv run python -m manager history
 
 test:
-	@echo $(ARGS)
+	@echo $(ARGS)	
