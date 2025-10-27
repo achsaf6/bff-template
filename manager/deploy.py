@@ -10,6 +10,7 @@ from .docker_utils import DockerManager
 from .gcp_utils import GCPManager
 from .github_utils import GitHubManager
 from .manifest import ManifestManager
+from .service_account_manager import ServiceAccountManager
 
 
 class DeployManager:
@@ -21,6 +22,7 @@ class DeployManager:
         self.docker = DockerManager(config)
         self.gcp = GCPManager(config)
         self.github = GitHubManager(config)
+        self.service_account = ServiceAccountManager(config, manifest)
     
     def confirm_deployment(self, region: str) -> bool:
         """Ask user to confirm deployment details."""
@@ -103,23 +105,7 @@ class DeployManager:
     
     def setup_service_account(self) -> bool:
         """Create and configure service account."""
-        print("")
-        print("Setting up service account...")
-        
-        # Create service account
-        if not self.gcp.create_service_account():
-            return False
-        
-        # Grant IAM roles
-        if not self.gcp.grant_iam_roles():
-            return False
-        
-        self.manifest.update_state("service_account_created", True)
-        self.manifest.log_operation("create_service_account", {
-            "email": self.config.service_account_email
-        })
-        
-        return True
+        return self.service_account.setup()
     
     def setup_github_secrets(self) -> bool:
         """Create service account key and upload to GitHub."""
@@ -130,7 +116,7 @@ class DeployManager:
         
         try:
             # Create service account key
-            if not self.gcp.create_service_account_key(key_file):
+            if not self.service_account.create_key(key_file):
                 return False
             
             # Upload to GitHub secrets

@@ -11,6 +11,7 @@ from .docker_utils import DockerManager
 from .gcp_utils import GCPManager
 from .github_utils import GitHubManager
 from .manifest import ManifestManager
+from .service_account_manager import ServiceAccountManager
 
 
 class CleanManager:
@@ -22,6 +23,7 @@ class CleanManager:
         self.docker = DockerManager(config)
         self.gcp = GCPManager(config)
         self.github = GitHubManager(config)
+        self.service_account = ServiceAccountManager(config, manifest)
     
     def confirm_cleanup(self) -> bool:
         """Ask user to confirm cleanup with project name verification."""
@@ -85,7 +87,7 @@ class CleanManager:
         
         # Delete Service Account
         if self.manifest.get_state("service_account_created"):
-            self.gcp.delete_service_account()
+            self.service_account.delete()
             print("✓ Service Account deleted")
         
         return True

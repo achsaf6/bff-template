@@ -11,6 +11,7 @@ from .config import ProjectConfig
 from .deploy import DeployManager
 from .init import InitManager
 from .manifest import ManifestManager
+from .service_account_manager import ServiceAccountManager
 
 
 def cmd_init(args, config: ProjectConfig, manifest: ManifestManager) -> int:
@@ -126,6 +127,45 @@ def cmd_config(args, config: ProjectConfig, manifest: ManifestManager) -> int:
     return 0
 
 
+def cmd_service_account(args, config: ProjectConfig, manifest: ManifestManager) -> int:
+    """Handle service account command."""
+    sa_manager = ServiceAccountManager(config, manifest)
+    
+    if args.action == 'create':
+        success = sa_manager.create()
+        return 0 if success else 1
+    
+    elif args.action == 'delete':
+        response = input(f"Are you sure you want to delete the service account '{config.service_account_email}'? (yes/N): ")
+        if response.lower() != 'yes':
+            print("Aborted")
+            return 1
+        success = sa_manager.delete()
+        return 0 if success else 1
+    
+    elif args.action == 'add-permissions':
+        roles = None
+        if args.roles:
+            roles = args.roles
+        success = sa_manager.add_permissions(roles)
+        return 0 if success else 1
+    
+    elif args.action == 'remove-permissions':
+        roles = None
+        if args.roles:
+            roles = args.roles
+        response = input(f"Are you sure you want to remove permissions from '{config.service_account_email}'? (yes/N): ")
+        if response.lower() != 'yes':
+            print("Aborted")
+            return 1
+        success = sa_manager.remove_permissions(roles)
+        return 0 if success else 1
+    
+    else:
+        print(f"Unknown action: {args.action}", file=sys.stderr)
+        return 1
+
+
 def main():
     """Main CLI entry point."""
     parser = argparse.ArgumentParser(
@@ -144,6 +184,11 @@ Examples:
   python -m manager config --list           # List all config values
   python -m manager config --get region     # Get a config value
   python -m manager config --set key=value  # Set a config value
+  python -m manager service-account create  # Create service account
+  python -m manager service-account delete  # Delete service account
+  python -m manager service-account add-permissions  # Add default permissions
+  python -m manager service-account add-permissions --roles roles/run.admin roles/storage.admin
+  python -m manager service-account remove-permissions  # Remove default permissions
         """
     )
     
@@ -213,6 +258,29 @@ Examples:
         help='List all configuration values'
     )
     
+    # Service account command
+    parser_sa = subparsers.add_parser('service-account', help='Manage GCP service account')
+    sa_subparsers = parser_sa.add_subparsers(dest='action', help='Service account action')
+    sa_subparsers.required = True
+    
+    sa_create = sa_subparsers.add_parser('create', help='Create a new service account')
+    
+    sa_delete = sa_subparsers.add_parser('delete', help='Delete the service account')
+    
+    sa_add = sa_subparsers.add_parser('add-permissions', help='Add IAM roles to service account')
+    sa_add.add_argument(
+        '--roles',
+        nargs='+',
+        help='Specific roles to add (default: standard deployment roles)'
+    )
+    
+    sa_remove = sa_subparsers.add_parser('remove-permissions', help='Remove IAM roles from service account')
+    sa_remove.add_argument(
+        '--roles',
+        nargs='+',
+        help='Specific roles to remove (default: standard deployment roles)'
+    )
+
     args = parser.parse_args()
     
     if not args.command:
@@ -231,6 +299,7 @@ Examples:
         'status': cmd_status,
         'history': cmd_history,
         'config': cmd_config,
+        'service-account': cmd_service_account,
     }
     
     handler = commands.get(args.command)

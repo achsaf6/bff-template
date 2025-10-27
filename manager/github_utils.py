@@ -54,13 +54,21 @@ class GitHubManager:
         
         try:
             print(f"Deleting GitHub repository: {repo_name}")
-            subprocess.run(
+            result = subprocess.run(
                 ["gh", "repo", "delete", repo_name, "--yes"],
+                capture_output=True,
+                text=True,
                 check=False
             )
-            return True
+            
+            if result.returncode == 0:
+                print(f"✓ Repository deleted successfully")
+                return True
+            else:
+                print(f"✗ Error deleting repository: {result.stderr}")
+                return False
         except subprocess.CalledProcessError as e:
-            print(f"Error deleting GitHub repository: {e}")
+            print(f"✗ Error deleting GitHub repository: {e}")
             return False
     
     def update_cicd_config(self) -> bool:
