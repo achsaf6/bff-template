@@ -1,7 +1,7 @@
-.PHONY: init update front back dev local docker test target deploy clean status history 
+.PHONY: init update front back dev local docker test target deploy clean status history lb-add lb-remove 
 
 init:
-	git submodule update --remote --recursive
+	git submodule update --init --recursive
 	uv run python -m manager init
 
 update:
@@ -57,6 +57,12 @@ status:
 
 history:
 	uv run python -m manager history
+
+lb-add:
+	uv run python -m manager loadbalancer add $(ARGS)
+
+lb-remove:
+	uv run python -m manager loadbalancer remove $(ARGS)
 
 test:
 	@echo $(ARGS)	
