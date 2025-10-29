@@ -1,188 +1,119 @@
-# BFF (Backend For Frontend) Template
+# BFF Template
 
-This project is a Backend For Frontend (BFF) template that provides a structured starting point for building backend services that directly support frontend applications. The BFF pattern is designed to optimize the backend API for specific frontend requirements.
+This is a template for building a web application with a backend and frontend.
 
-## Prerequisites
+## What You Need
 
-Before you begin, ensure you have the following installed on your system:
+Before you start, make sure you have these installed:
 
-### Container Runtime and Cloud Tools
-- Colima is required for running containers on macOS:
-  ```bash
-  brew install colima
-  colima start
-  ```
-- Docker is required for containerization:
-  ```bash
-  brew install docker
-  ```
-- Google Cloud SDK (required for admin mode):
-  ```bash
-  brew install google-cloud-sdk
-  gcloud init
-  gcloud auth configure-docker
-  ```
-- For more information, visit:
-  - [Colima's documentation](https://github.com/abiosoft/colima)
-  - [Google Cloud SDK documentation](https://cloud.google.com/sdk/docs)
+1. **Git** - For downloading and managing code
+   - Mac users: Usually already installed. Open Terminal and type `git --version` to check.
 
-### Python
-- Python 3.8 or higher
-- To check your Python version:
-  ```bash
-  python --version
-  ```
-- Install Python from [python.org](https://www.python.org/downloads/)
+2. **Python** - For the backend
+   - Download from [python.org](https://www.python.org/downloads/)
+   - Mac users: You likely already have Python. Check with `python --version`
 
-### Poetry (Python Dependency Management)
-- Poetry is required for managing Python dependencies
-- Install Poetry by running:
-  ```bash
-  curl -sSL https://install.python-poetry.org | python3 -
-  ```
-- Verify installation:
-  ```bash
-  poetry --version
-  ```
-- For more information, visit [Poetry's documentation](https://python-poetry.org/docs/)
+3. **Node.js** - For the frontend
+   - Download from [nodejs.org](https://nodejs.org/)
 
-### Node.js and npm
-- Node.js 14.x or higher is required for the React frontend
-- To check your Node.js version:
-  ```bash
-  node --version
-  npm --version
-  ```
-- Install Node.js from [nodejs.org](https://nodejs.org/)
+## Getting Started
 
-### GitHub CLI (gh)
-- GitHub CLI is required for managing GitHub secrets and interacting with repositories
-- Install GitHub CLI using Homebrew:
-  ```bash
-  brew install gh
-  ```
-- Authenticate with GitHub:
-  ```bash
-  gh auth login
-  ```
-- Follow the interactive prompts to complete authentication
-- For more information, visit [GitHub CLI documentation](https://cli.github.com/)
+### Step 1: Open Cursor
 
-## Project Setup
+Download and install [Cursor](https://cursor.com/) if you haven't already.
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/achsaf6/bff-template
-   cd bff-template
-   ```
+### Step 2: Clone the Repository
 
-2. Initialize the project:
-   ```bash
-   make init
-   ```
-   This command will run the initialization script that:
-   - Prompts for deployment type:
-     - `local` (default): Sets up local development environment
-     - `admin`: Sets up full deployment with GCP service accounts and Docker configuration
-   - Prompts for region (default: europe-west4)
-   - Updates project name in configuration files
-   - Creates and sets up a new React frontend application
-   - Installs Python backend dependencies using Poetry
-   - Configures CI/CD workflow settings
-   
-   If running in `admin` mode, it will also:
-   - Activate CI/CD workflow
-   - Build and push Docker container to Google Container Registry
-   - Create and configure GCP service account with necessary permissions
-   - Set up GitHub secrets for deployment
+1. Open Cursor
+2. Click the **Source Control** icon on the left sidebar (looks like a branch)
+3. Click **Clone Repository**
+4. Paste this URL: `https://github.com/achsaf6/bff-template`
+5. Choose a folder on your computer to save it
+6. Click **Clone**
 
-3. After initialization, set your Python interpreter to the path shown in the terminal output.
-   Note: The init script can only be run once as it self-disables after completion.
+### Step 3: Open the Project
 
-## Project Structure
+After cloning finishes, Cursor will ask if you want to open the repository. Click **Open**.
 
-```
-bff-template/
-├── backend/         # Backend service directory
-│   └── main.py     # Main application entry point
-├── frontend/        # React frontend application
-├── makefile        # Build automation
-├── poetry.lock     # Lock file for dependencies
-└── pyproject.toml  # Python project configuration
-```
+### Step 4: Initialize the Project
 
-## Development
+1. Go to the **Terminal** menu at the top
+2. Click **New Terminal**
+3. A command box will open at the bottom of the screen
+4. Type: `make init`
+5. Press Enter
 
-Available make commands:
-- `make init` - Initialize the project (first-time setup)
-- `make dev` - Run both frontend and backend in development mode
-- `make local` - Run backend only
-- `make update` - Commit and push changes
-- `make test` - Run tests (customizable)
+Follow any prompts that appear and press Enter for defaults.
 
-## Managing Dependencies
+### Step 5: Set Python Interpreter
 
-### Adding Frontend Libraries (npm)
+After `make init` finishes, you need to tell Cursor to use the Python environment:
 
-To add a new library to the React frontend:
+1. Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac) to open the Command Palette
+2. Type: `Python: Select Interpreter`
+3. Look for an option that shows `.venv` in the path
+4. Click on it to select it
 
-1. Navigate to the frontend directory:
-   ```bash
-   cd frontend
-   ```
+### Step 6: Run the Application
 
-2. Install the package:
-   ```bash
-   npm install <package-name>
-   ```
+1. In the same terminal, type: `make local`
+2. Press Enter
 
-3. For development-only dependencies:
-   ```bash
-   npm install --save-dev <package-name>
-   ```
+When it starts, you'll see messages telling you:
+- **Frontend**: Open your browser to `http://localhost:5173`
+- **Backend API**: Available at `http://localhost:8000`
 
-4. The package will be automatically added to `package.json` and `package-lock.json`
+### Stopping the Application
 
-Example:
+Click in the terminal and press `Ctrl+C` to stop everything.
+
+## Alternative: Using Terminal
+
+If you prefer using the terminal instead of Cursor:
+
+### Step 1: Download the Template
+
 ```bash
-npm install axios           # Add axios for HTTP requests
-npm install --save-dev jest # Add jest as a dev dependency
+git clone https://github.com/achsaf6/bff-template
+cd bff-template
 ```
 
-### Adding Python Modules (uv)
+### Step 2: Initialize the Project
 
-To add a new Python module to the backend:
-
-1. Make sure you're in the project root directory
-
-2. Add a package:
-   ```bash
-   uv add <package-name>
-   ```
-
-3. For development-only dependencies:
-   ```bash
-   uv add --dev <package-name>
-   ```
-
-4. The package will be automatically added to `pyproject.toml` and `uv.lock`
-
-Example:
 ```bash
-uv add requests         # Add requests for HTTP calls
-uv add --dev pytest     # Add pytest as a dev dependency
+make init
 ```
 
-For more information:
-- [npm documentation](https://docs.npmjs.com/)
-- [uv documentation](https://github.com/astral-sh/uv)
+This command sets up everything automatically. It will:
+- Download any required components
+- Create the project files
+- Install dependencies
 
-## Contributing
+Just follow any prompts that appear and press Enter to use the default options.
 
-1. Create a new branch for your feature
-2. Make your changes
-3. Submit a pull request
+### Step 3: Set Python Interpreter
 
-## License
+After `make init` finishes, you may want to configure your Python IDE. If you're using an IDE like VS Code or Cursor, set the Python interpreter to the `.venv` folder that was created.
 
-[Add your license information here]
+### Step 4: Run the Application
+
+To start both the frontend and backend together:
+
+```bash
+make local
+```
+
+When it starts, you'll see:
+- **Frontend**: Open your browser to `http://localhost:5173`
+- **Backend API**: Available at `http://localhost:8000`
+
+That's it! Your application is running.
+
+### Stopping the Application
+
+Press `Ctrl+C` in your terminal to stop everything.
+
+## Need Help?
+
+- If something doesn't work, try running the commands again
+- Check that you have the correct versions installed by running the version commands above
