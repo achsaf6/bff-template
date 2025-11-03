@@ -40,7 +40,8 @@ docker:
 	fi; \
 	docker build -t bff-template .; \
 	echo "Exporting environment variables from .env file..."; \
-	docker run --env-file .env -p $$PORT:$$PORT bff-template
+	docker run --env-file .env -e PORT=$$PORT -p $$PORT:$$PORT bff-template
+
 
 deploy:
 	@echo "Re-starting Colima in x86_64 mode with Rosetta if available..."

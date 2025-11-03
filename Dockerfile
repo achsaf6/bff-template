@@ -45,4 +45,4 @@ COPY --from=frontend-builder /app/package.json frontend/package.json
 EXPOSE 8080
 
 # Start the application without shell indirection
-CMD ["/app/.venv/bin/uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD /app/.venv/bin/uvicorn backend.main:app --host 0.0.0.0 --port ${PORT:-8080}
